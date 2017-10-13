@@ -1,0 +1,4 @@
+{
+  mongoURI: "mongo://<your mongoURI>",
+  appURL: "http(s)://<your domain>"
+}
