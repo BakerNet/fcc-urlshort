@@ -9,7 +9,10 @@ module.exports = function (db, config){
   router.get('/:code', function(req,res,next){
     let sites = db.collection('sites');
     sites.findOne({code: req.params.code})
-      .then((result) => {res.redirect(result.url)})
+      .then((result) => {
+        if(result) res.redirect(result.url)
+        res.send({error: "Invalid code"})
+    })
       .catch((err)=>{throw err;})
   });
 
@@ -24,11 +27,12 @@ module.exports = function (db, config){
       .then((result) => {
         if (result){
           res.send({ "original_url": url, "short_url": '' + config.appURL + '/' + result.code });
-          next();
+          return;
         }
         return genCode();
       })
       .then((newCode) => {
+        if(!newCode) return;
         sites.findOne({code: newCode}, function(err, result){
           if (err) throw err;
           if (result){
